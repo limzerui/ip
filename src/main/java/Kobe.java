@@ -19,9 +19,9 @@ public class Kobe {
     }
 
     private static void processUserInput() {
-        try (Scanner sc = new Scanner(System.in)) {
-            while (sc.hasNextLine()) {
-                String line = sc.nextLine().trim();
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine().trim();
                 if (line.isEmpty()) {
                     continue;
                 }
@@ -79,36 +79,36 @@ public class Kobe {
             tasks[taskCount++] = new Task(description);
             System.out.println(" added: " + description);
         } else {
-            System.out.println(" task list full (" + MAX_TASKS + ")");
+            System.out.println(" Task list is full (" + MAX_TASKS + " tasks maximum)");
         }
         printBorder();
     }
 
     private static void handleMark(String line) {
-        Integer idx = parseIndex(line.substring(5));
-        if (idx == null) {
+        Integer index = parseIndex(line.substring(5));
+        if (index == null) {
             showIndexError();
             return;
         }
-        Task t = tasks[idx];
-        t.mark();
+        Task task = tasks[index];
+        task.mark();
         printBorder();
         System.out.println(" Nice! I've marked this task as done:");
-        System.out.println("   " + t);
+        System.out.println("   " + task);
         printBorder();
     }
 
     private static void handleUnmark(String line) {
-        Integer idx = parseIndex(line.substring(7));
-        if (idx == null) {
+        Integer index = parseIndex(line.substring(7));
+        if (index == null) {
             showIndexError();
             return;
         }
-        Task t = tasks[idx];
-        t.unmark();
+        Task task = tasks[index];
+        task.unmark();
         printBorder();
         System.out.println(" OK, I've marked this task as not done yet:");
-        System.out.println("   " + t);
+        System.out.println("   " + task);
         printBorder();
     }
 
