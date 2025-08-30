@@ -20,14 +20,19 @@ then
 fi
 
 # run the program, feed commands from input.txt file and redirect the output to the ACTUAL.TXT
-java -classpath ../bin Duke < input.txt > ACTUAL.TXT
+java -classpath ../bin Kobe < input.txt > ACTUAL.TXT
 
-# convert to UNIX format
-cp EXPECTED.TXT EXPECTED-UNIX.TXT
-dos2unix ACTUAL.TXT EXPECTED-UNIX.TXT
+# convert to UNIX format if dos2unix exists
+if command -v dos2unix >/dev/null 2>&1; then
+  cp EXPECTED.TXT EXPECTED-UNIX.TXT
+  dos2unix ACTUAL.TXT EXPECTED-UNIX.TXT >/dev/null 2>&1
+  diff_file=EXPECTED-UNIX.TXT
+else
+  diff_file=EXPECTED.TXT
+fi
 
 # compare the output to the expected output
-diff ACTUAL.TXT EXPECTED-UNIX.TXT
+diff ACTUAL.TXT "$diff_file"
 if [ $? -eq 0 ]
 then
     echo "Test result: PASSED"
