@@ -3,8 +3,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Kobe {
-    private static final String BORDER = "----------------------------------------";
     private static final List<Task> tasks = new ArrayList<>();
+    private static final Ui ui = new Ui();
 
     public static void main(String[] args) {
         showGreeting();
@@ -12,7 +12,7 @@ public class Kobe {
     }
 
     private static void showGreeting() {
-        printlnBordered("Hello! I'm Kobe", "What can I do for you?");
+        ui.block(new String[]{" Hello! I'm Kobe", " What can I do for you?"});
     }
 
     private static void processUserInput() {
@@ -39,7 +39,13 @@ public class Kobe {
                     handleToggle(lower.substring(7), false);
                     continue;
                 }
-                addTask(line);
+
+                try {
+                    Task task = Parser.parseTask(line);
+                    addTask(task);
+                } catch (Exception e) {
+                    ui.block(new String[]{" Error: " + e.getMessage()});
+                }
             }
         }
     }
@@ -53,25 +59,30 @@ public class Kobe {
     }
 
     private static void showGoodbye() {
-        printlnBordered("Bye. Hope to see you again soon!");
+        ui.block(new String[]{" Bye. Hope to see you again soon!"});
     }
 
     private static void showTaskList() {
         if (tasks.isEmpty()) {
-            printlnBordered("No tasks in the list.");
+            ui.block(new String[]{" No tasks in the list."});
             return;
         }
-        printBorder();
-        System.out.println(" Here are the tasks in your list:");
+
+        String[] lines = new String[tasks.size() + 1];
+        lines[0] = " Here are the tasks in your list:";
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(" " + (i + 1) + "." + tasks.get(i));
+            lines[i + 1] = " " + (i + 1) + "." + tasks.get(i);
         }
-        printBorder();
+        ui.block(lines);
     }
 
-    private static void addTask(String description) {
-        tasks.add(new Task(description));
-        printlnBordered("added: " + description);
+    private static void addTask(Task task) {
+        tasks.add(task);
+        ui.block(new String[]{
+            " Got it. I've added this task:",
+            "   " + task,
+            " Now you have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + " in the list."
+        });
     }
 
     private static void handleToggle(String indexPart, boolean mark) {
@@ -83,10 +94,16 @@ public class Kobe {
         Task task = tasks.get(index);
         if (mark) {
             task.mark();
-            printlnBordered("Nice! I've marked this task as done:", "  " + task);
+            ui.block(new String[]{
+                " Nice! I've marked this task as done:",
+                "   " + task
+            });
         } else {
             task.unmark();
-            printlnBordered("OK, I've marked this task as not done yet:", "  " + task);
+            ui.block(new String[]{
+                " OK, I've marked this task as not done yet:",
+                "   " + task
+            });
         }
     }
 
@@ -103,18 +120,6 @@ public class Kobe {
     }
 
     private static void showIndexError() {
-        printlnBordered("Invalid task number.");
-    }
-
-    private static void printBorder() {
-        System.out.println(BORDER);
-    }
-
-    private static void printlnBordered(String... lines) {
-        printBorder();
-        for (String l : lines) {
-            System.out.println(" " + l);
-        }
-        printBorder();
+        ui.block(new String[]{" Invalid task number."});
     }
 }
