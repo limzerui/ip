@@ -1,10 +1,10 @@
 import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Kobe {
     private static final String BORDER = "----------------------------------------";
-    private static final int MAX_TASKS = 100;
-    private static final Task[] tasks = new Task[MAX_TASKS];
-    private static int taskCount = 0;
+    private static final List<Task> tasks = new ArrayList<>();
 
     public static void main(String[] args) {
         showGreeting();
@@ -12,10 +12,7 @@ public class Kobe {
     }
 
     private static void showGreeting() {
-        printBorder();
-        System.out.println(" Hello! I'm Kobe");
-        System.out.println(" What can I do for you?");
-        printBorder();
+        printlnBordered("Hello! I'm Kobe", "What can I do for you?");
     }
 
     private static void processUserInput() {
@@ -33,12 +30,13 @@ public class Kobe {
                     showTaskList();
                     continue;
                 }
-                if (line.startsWith("mark ")) {
-                    handleMark(line);
+                String lower = line.toLowerCase();
+                if (lower.startsWith("mark ")) {
+                    handleToggle(lower.substring(5), true);
                     continue;
                 }
-                if (line.startsWith("unmark ")) {
-                    handleUnmark(line);
+                if (lower.startsWith("unmark ")) {
+                    handleToggle(lower.substring(7), false);
                     continue;
                 }
                 addTask(line);
@@ -55,67 +53,47 @@ public class Kobe {
     }
 
     private static void showGoodbye() {
-        printBorder();
-        System.out.println(" Bye. Hope to see you again soon!");
-        printBorder();
+        printlnBordered("Bye. Hope to see you again soon!");
     }
 
     private static void showTaskList() {
+        if (tasks.isEmpty()) {
+            printlnBordered("No tasks in the list.");
+            return;
+        }
         printBorder();
-        if (taskCount == 0) {
-            System.out.println(" No tasks in the list.");
-        } else {
-            System.out.println(" Here are the tasks in your list:");
-            for (int i = 0; i < taskCount; i++) {
-                System.out.println(" " + (i + 1) + "." + tasks[i]);
-            }
+        System.out.println(" Here are the tasks in your list:");
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println(" " + (i + 1) + "." + tasks.get(i));
         }
         printBorder();
     }
 
     private static void addTask(String description) {
-        printBorder();
-        if (taskCount < MAX_TASKS) {
-            tasks[taskCount++] = new Task(description);
-            System.out.println(" added: " + description);
+        tasks.add(new Task(description));
+        printlnBordered("added: " + description);
+    }
+
+    private static void handleToggle(String indexPart, boolean mark) {
+        Integer index = parseIndex(indexPart);
+        if (index == null) {
+            showIndexError();
+            return;
+        }
+        Task task = tasks.get(index);
+        if (mark) {
+            task.mark();
+            printlnBordered("Nice! I've marked this task as done:", "  " + task);
         } else {
-            System.out.println(" Task list is full (" + MAX_TASKS + " tasks maximum)");
+            task.unmark();
+            printlnBordered("OK, I've marked this task as not done yet:", "  " + task);
         }
-        printBorder();
-    }
-
-    private static void handleMark(String line) {
-        Integer index = parseIndex(line.substring(5));
-        if (index == null) {
-            showIndexError();
-            return;
-        }
-        Task task = tasks[index];
-        task.mark();
-        printBorder();
-        System.out.println(" Nice! I've marked this task as done:");
-        System.out.println("   " + task);
-        printBorder();
-    }
-
-    private static void handleUnmark(String line) {
-        Integer index = parseIndex(line.substring(7));
-        if (index == null) {
-            showIndexError();
-            return;
-        }
-        Task task = tasks[index];
-        task.unmark();
-        printBorder();
-        System.out.println(" OK, I've marked this task as not done yet:");
-        System.out.println("   " + task);
-        printBorder();
     }
 
     private static Integer parseIndex(String numberPart) {
         try {
             int userIndex = Integer.parseInt(numberPart.trim());
-            if (userIndex < 1 || userIndex > taskCount) {
+            if (userIndex < 1 || userIndex > tasks.size()) {
                 return null;
             }
             return userIndex - 1;
@@ -125,12 +103,18 @@ public class Kobe {
     }
 
     private static void showIndexError() {
-        printBorder();
-        System.out.println(" Invalid task number.");
-        printBorder();
+        printlnBordered("Invalid task number.");
     }
 
     private static void printBorder() {
         System.out.println(BORDER);
+    }
+
+    private static void printlnBordered(String... lines) {
+        printBorder();
+        for (String l : lines) {
+            System.out.println(" " + l);
+        }
+        printBorder();
     }
 }
