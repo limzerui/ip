@@ -1,10 +1,8 @@
 import java.util.Scanner;
-import java.util.List;
-import java.util.ArrayList;
 
 public class Kobe {
-    private static final List<Task> tasks = new ArrayList<>();
     private static final Ui ui = new Ui();
+    private static final TaskManager taskManager = new TaskManager(ui);
 
     public static void main(String[] args) {
         showGreeting();
@@ -26,27 +24,27 @@ public class Kobe {
                     showGoodbye();
                     break;
                 }
-                if (isListCommand(line)) {
-                    showTaskList();
-                    continue;
-                }
-                String lower = line.toLowerCase();
-                if (lower.startsWith("mark ")) {
-                    handleToggle(lower.substring(5), true);
-                    continue;
-                }
-                if (lower.startsWith("unmark ")) {
-                    handleToggle(lower.substring(7), false);
-                    continue;
-                }
-
-                try {
-                    Task task = Parser.parseTask(line);
-                    addTask(task);
-                } catch (Exception e) {
-                    ui.block(new String[]{" Error: " + e.getMessage()});
-                }
+                
+                processCommand(line);
             }
+        }
+    }
+    
+    private static void processCommand(String line) {
+        try {
+            if (isListCommand(line)) {
+                taskManager.showTaskList();
+            } else if (line.toLowerCase().startsWith("mark ")) {
+                taskManager.markTask(line.substring(5));
+            } else if (line.toLowerCase().startsWith("unmark ")) {
+                taskManager.unmarkTask(line.substring(7));
+            } else {
+                // Try to parse as a task creation command
+                Task task = Parser.parseTask(line);
+                taskManager.addTask(task);
+            }
+        } catch (KobeException e) {
+            ui.block(new String[]{" " + e.getMessage()});
         }
     }
 
@@ -60,66 +58,5 @@ public class Kobe {
 
     private static void showGoodbye() {
         ui.block(new String[]{" Bye. Hope to see you again soon!"});
-    }
-
-    private static void showTaskList() {
-        if (tasks.isEmpty()) {
-            ui.block(new String[]{" No tasks in the list."});
-            return;
-        }
-
-        String[] lines = new String[tasks.size() + 1];
-        lines[0] = " Here are the tasks in your list:";
-        for (int i = 0; i < tasks.size(); i++) {
-            lines[i + 1] = " " + (i + 1) + "." + tasks.get(i);
-        }
-        ui.block(lines);
-    }
-
-    private static void addTask(Task task) {
-        tasks.add(task);
-        ui.block(new String[]{
-            " Got it. I've added this task:",
-            "   " + task,
-            " Now you have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + " in the list."
-        });
-    }
-
-    private static void handleToggle(String indexPart, boolean mark) {
-        Integer index = parseIndex(indexPart);
-        if (index == null) {
-            showIndexError();
-            return;
-        }
-        Task task = tasks.get(index);
-        if (mark) {
-            task.mark();
-            ui.block(new String[]{
-                " Nice! I've marked this task as done:",
-                "   " + task
-            });
-        } else {
-            task.unmark();
-            ui.block(new String[]{
-                " OK, I've marked this task as not done yet:",
-                "   " + task
-            });
-        }
-    }
-
-    private static Integer parseIndex(String numberPart) {
-        try {
-            int userIndex = Integer.parseInt(numberPart.trim());
-            if (userIndex < 1 || userIndex > tasks.size()) {
-                return null;
-            }
-            return userIndex - 1;
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    private static void showIndexError() {
-        ui.block(new String[]{" Invalid task number."});
     }
 }
