@@ -1,4 +1,12 @@
+package kobe;
+
 import java.util.Scanner;
+
+import kobe.exception.KobeException;
+import kobe.logic.TaskManager;
+import kobe.parser.Parser;
+import kobe.task.Task;
+import kobe.ui.Ui;
 
 public class Kobe {
     private static final Ui ui = new Ui();
