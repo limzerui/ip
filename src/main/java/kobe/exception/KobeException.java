@@ -1,3 +1,5 @@
+package kobe.exception;
+
 public class KobeException extends Exception {
     public enum ErrorType {
         EMPTY_DESCRIPTION,

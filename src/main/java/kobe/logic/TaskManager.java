@@ -1,5 +1,11 @@
+package kobe.logic;
+
 import java.util.List;
 import java.util.ArrayList;
+
+import kobe.exception.KobeException;
+import kobe.task.Task;
+import kobe.ui.Ui;
 
 public class TaskManager {
     private final List<Task> tasks;

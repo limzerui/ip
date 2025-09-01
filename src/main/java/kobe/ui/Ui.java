@@ -1,3 +1,5 @@
+package kobe.ui;
+
 public class Ui {
     private static final String BORDER = "____________________________________________________________";
 

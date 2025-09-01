@@ -1,3 +1,11 @@
+package kobe.parser;
+
+import kobe.exception.KobeException;
+import kobe.task.Deadline;
+import kobe.task.Event;
+import kobe.task.Task;
+import kobe.task.Todo;
+
 public class Parser {
 
     public static Task parseTask(String input) throws KobeException {
