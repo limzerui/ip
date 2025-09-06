@@ -6,14 +6,18 @@ import java.util.ArrayList;
 import kobe.exception.KobeException;
 import kobe.task.Task;
 import kobe.ui.Ui;
+import kobe.storage.Storage;
 
 public class TaskManager {
     private final List<Task> tasks;
     private final Ui ui;
+    private final Storage storage;
     
-    public TaskManager(Ui ui) {
-        this.tasks = new ArrayList<>();
+    public TaskManager(Ui ui, Storage storage) {
         this.ui = ui;
+        this.storage = storage;
+        List<Task> loaded = storage.load();
+        this.tasks = new ArrayList<>(loaded);
     }
     
     public void addTask(Task task) {
@@ -23,6 +27,7 @@ public class TaskManager {
             "   " + task,
             " Now you have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + " in the list."
         });
+        storage.save(tasks);
     }
     
     public void showTaskList() {
@@ -68,6 +73,7 @@ public class TaskManager {
                     "   " + task
                 });
             }
+            storage.save(tasks);
         } catch (IndexOutOfBoundsException e) {
             throw KobeException.invalidTaskNumber(tasks.size());
         }
