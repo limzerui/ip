@@ -12,6 +12,7 @@ public class TaskManager {
     private final Ui ui;
     
     public TaskManager(Ui ui) {
+        //already added prior
         this.tasks = new ArrayList<>();
         this.ui = ui;
     }
@@ -84,4 +85,21 @@ public class TaskManager {
             return null;
         }
     }
-} 
+
+    public void deleteTask(String indexPart) throws KobeException {
+        Integer index = parseIndex(indexPart);
+        if (index == null) {
+            throw KobeException.invalidTaskNumber(tasks.size());
+        }
+        try {
+            Task removed = tasks.remove((int) index);
+            ui.block(new String[]{
+                " Noted. I've removed this task:",
+                "   " + removed,
+                " Now you have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + " in the list."
+            });
+        } catch (IndexOutOfBoundsException e) {
+            throw KobeException.invalidTaskNumber(tasks.size());
+        }
+    }
+}

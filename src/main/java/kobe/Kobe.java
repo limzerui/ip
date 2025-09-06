@@ -46,6 +46,8 @@ public class Kobe {
                 taskManager.markTask(line.substring(5));
             } else if (line.toLowerCase().startsWith("unmark ")) {
                 taskManager.unmarkTask(line.substring(7));
+            } else if (line.toLowerCase().startsWith("delete ")) {
+                taskManager.deleteTask(line.substring(7));
             } else {
                 // Try to parse as a task creation command
                 Task task = Parser.parseTask(line);
