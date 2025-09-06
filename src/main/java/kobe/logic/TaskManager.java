@@ -12,6 +12,7 @@ public class TaskManager {
     private final Ui ui;
     
     public TaskManager(Ui ui) {
+        //already added prior
         this.tasks = new ArrayList<>();
         this.ui = ui;
     }
