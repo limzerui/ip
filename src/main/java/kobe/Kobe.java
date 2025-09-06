@@ -7,10 +7,11 @@ import kobe.logic.TaskManager;
 import kobe.parser.Parser;
 import kobe.task.Task;
 import kobe.ui.Ui;
+import kobe.storage.Storage;
 
 public class Kobe {
     private static final Ui ui = new Ui();
-    private static final TaskManager taskManager = new TaskManager(ui);
+    private static final TaskManager taskManager = new TaskManager(ui, new Storage());
 
     public static void main(String[] args) {
         showGreeting();
