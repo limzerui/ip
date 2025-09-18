@@ -66,12 +66,16 @@ public class TaskManager {
                     " Nice! I've marked this task as done:",
                     "   " + task
                 });
+                // Persist change
+                storage.save(tasks);
             } else {
                 task.unmark();
                 ui.block(new String[]{
                     " OK, I've marked this task as not done yet:",
                     "   " + task
                 });
+                // Persist change
+                storage.save(tasks);
             }
         } catch (IndexOutOfBoundsException e) {
             throw KobeException.invalidTaskNumber(tasks.size());
@@ -102,6 +106,8 @@ public class TaskManager {
                 "   " + removed,
                 " Now you have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s") + " in the list."
             });
+            // Persist deletion
+            storage.save(tasks);
         } catch (IndexOutOfBoundsException e) {
             throw KobeException.invalidTaskNumber(tasks.size());
         }
