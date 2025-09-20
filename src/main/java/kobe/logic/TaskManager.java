@@ -112,4 +112,31 @@ public class TaskManager {
             throw KobeException.invalidTaskNumber(tasks.size());
         }
     }
+
+    public void findTasks(String keyword) {
+        String k = keyword == null ? "" : keyword.trim().toLowerCase();
+        if (k.isEmpty()) {
+            ui.block(new String[]{" Please enter a keyword to find."});
+            return;
+        }
+
+        ArrayList<Task> matches = new ArrayList<>();
+        for (Task t : tasks) {
+            if (t.getDescription().toLowerCase().contains(k)) {
+                matches.add(t);
+            }
+        }
+
+        if (matches.isEmpty()) {
+            ui.block(new String[]{" No matching tasks found."});
+            return;
+        }
+
+        String[] lines = new String[matches.size() + 1];
+        lines[0] = " Here are the matching tasks in your list:";
+        for (int i = 0; i < matches.size(); i++) {
+            lines[i + 1] = " " + (i + 1) + "." + matches.get(i);
+        }
+        ui.block(lines);
+    }
 }

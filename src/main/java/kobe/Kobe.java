@@ -55,6 +55,12 @@ public class Kobe {
         try {
             if (isListCommand(line)) {
                 taskManager.showTaskList();
+            } else if (line.toLowerCase().startsWith("find")) {
+                String keyword = line.length() > 4 ? line.substring(4).trim() : "";
+                if (keyword.isEmpty()) {
+                    throw new KobeException(" Please enter a keyword to find.");
+                }
+                taskManager.findTasks(keyword);
             } else if (line.toLowerCase().startsWith("mark ")) {
                 taskManager.markTask(line.substring(5));
             } else if (line.toLowerCase().startsWith("unmark ")) {
