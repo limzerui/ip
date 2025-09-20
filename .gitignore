@@ -3,6 +3,7 @@
 /out/
 /*.iml
 META-INF/
+/data/
 
 # Gradle build files
 /.gradle/
