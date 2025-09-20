@@ -1,5 +1,6 @@
 package kobe;
 
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 import kobe.exception.KobeException;
@@ -10,19 +11,30 @@ import kobe.ui.Ui;
 import kobe.storage.Storage;
 
 public class Kobe {
-    private static final Ui ui = new Ui();
-    private static final TaskManager taskManager = new TaskManager(ui, new Storage());
+    private final Ui ui;
+    private final Storage storage;
+    private final TaskManager taskManager;
+
+    public Kobe(String filePath) {
+        this.ui = new Ui();
+        this.storage = new Storage(Paths.get(filePath));
+        this.taskManager = new TaskManager(ui, storage);
+    }
 
     public static void main(String[] args) {
+        new Kobe("data/kobe.txt").run();
+    }
+
+    public void run() {
         showGreeting();
         processUserInput();
     }
 
-    private static void showGreeting() {
+    private void showGreeting() {
         ui.block(new String[]{" Hello! I'm Kobe", " What can I do for you?"});
     }
 
-    private static void processUserInput() {
+    private void processUserInput() {
         try (Scanner scanner = new Scanner(System.in)) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine().trim();
@@ -33,13 +45,13 @@ public class Kobe {
                     showGoodbye();
                     break;
                 }
-                
+
                 processCommand(line);
             }
         }
     }
-    
-    private static void processCommand(String line) {
+
+    private void processCommand(String line) {
         try {
             if (isListCommand(line)) {
                 taskManager.showTaskList();
@@ -59,15 +71,15 @@ public class Kobe {
         }
     }
 
-    private static boolean shouldExit(String input) {
+    private boolean shouldExit(String input) {
         return input.trim().equalsIgnoreCase("bye");
     }
 
-    private static boolean isListCommand(String input) {
+    private boolean isListCommand(String input) {
         return input.equalsIgnoreCase("list");
     }
 
-    private static void showGoodbye() {
+    private void showGoodbye() {
         ui.block(new String[]{" Bye. Hope to see you again soon!"});
     }
 }
