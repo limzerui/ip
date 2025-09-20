@@ -10,21 +10,36 @@ import kobe.task.Task;
 import kobe.ui.Ui;
 import kobe.storage.Storage;
 
+/**
+ * Main entry point for the Kobe task application.
+ * Sets up UI, storage, and task management, and runs the REPL loop.
+ */
 public class Kobe {
     private final Ui ui;
     private final Storage storage;
     private final TaskManager taskManager;
 
+    /**
+     * Creates a new Kobe application instance using the given file path for persistence.
+     * @param filePath path to the data file (e.g., "data/kobe.txt")
+     */
     public Kobe(String filePath) {
         this.ui = new Ui();
         this.storage = new Storage(Paths.get(filePath));
         this.taskManager = new TaskManager(ui, storage);
     }
 
+    /**
+     * Application entrypoint. Creates and runs the app instance.
+     * @param args CLI arguments (unused)
+     */
     public static void main(String[] args) {
         new Kobe("data/kobe.txt").run();
     }
 
+    /**
+     * Starts the interactive loop to process user commands.
+     */
     public void run() {
         showGreeting();
         processUserInput();

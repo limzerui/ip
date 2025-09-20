@@ -6,8 +6,19 @@ import kobe.task.Event;
 import kobe.task.Task;
 import kobe.task.Todo;
 
+/**
+ * Parses user input strings into Task objects for creation commands
+ * (todo, deadline, event). Throws {@link KobeException} on invalid input.
+ */
 public class Parser {
 
+    /**
+     * Parses a task-creation command into a concrete {@link Task}.
+     * Supported commands: "todo", "deadline", "event".
+     * @param input full user input line
+     * @return the corresponding Task
+     * @throws KobeException if input is empty or invalid
+     */
     public static Task parseTask(String input) throws KobeException {
         String trimmed = input.trim();
         if (trimmed.isEmpty()) {

@@ -8,11 +8,21 @@ import kobe.task.Task;
 import kobe.ui.Ui;
 import kobe.storage.Storage;
 
+/**
+ * Manages the list of tasks and coordinates persistence and UI messages
+ * for list operations (add, delete, mark/unmark, list, find).
+ */
 public class TaskManager {
     private final List<Task> tasks;
     private final Ui ui;
     private final Storage storage;
 
+    /**
+     * Constructs a TaskManager with UI and Storage collaborators.
+     * Loads tasks from storage on initialization.
+     * @param ui user interface for feedback
+     * @param storage storage provider for persistence
+     */
     public TaskManager(Ui ui, Storage storage) {
         this.ui = ui;
         this.storage = storage;
@@ -20,6 +30,10 @@ public class TaskManager {
         this.tasks = new ArrayList<>(loaded);
     }
     
+    /**
+     * Adds a task, prints confirmation, and persists the list.
+     * @param task the task to add
+     */
     public void addTask(Task task) {
         tasks.add(task);
         ui.block(new String[]{
@@ -30,6 +44,9 @@ public class TaskManager {
         storage.save(tasks);
     }
     
+    /**
+     * Displays all tasks with their indices.
+     */
     public void showTaskList() {
         if (tasks.isEmpty()) {
             ui.block(new String[]{" No tasks in the list."});
@@ -44,10 +61,20 @@ public class TaskManager {
         ui.block(lines);
     }
     
+    /**
+     * Marks the task at the given 1-based index as done.
+     * @param indexPart 1-based index as user input
+     * @throws KobeException if the index is invalid or out of bounds
+     */
     public void markTask(String indexPart) throws KobeException {
         toggleTask(indexPart, true);
     }
     
+    /**
+     * Unmarks the task at the given 1-based index as not done.
+     * @param indexPart 1-based index as user input
+     * @throws KobeException if the index is invalid or out of bounds
+     */
     public void unmarkTask(String indexPart) throws KobeException {
         toggleTask(indexPart, false);
     }
@@ -94,6 +121,11 @@ public class TaskManager {
         }
     }
 
+    /**
+     * Deletes the task at the given 1-based index.
+     * @param indexPart 1-based index as user input
+     * @throws KobeException if the index is invalid or out of bounds
+     */
     public void deleteTask(String indexPart) throws KobeException {
         Integer index = parseIndex(indexPart);
         if (index == null) {
@@ -113,6 +145,10 @@ public class TaskManager {
         }
     }
 
+    /**
+     * Finds and displays tasks whose descriptions contain the given keyword (case-insensitive).
+     * @param keyword search substring
+     */
     public void findTasks(String keyword) {
         String k = keyword == null ? "" : keyword.trim().toLowerCase();
         if (k.isEmpty()) {

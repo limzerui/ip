@@ -15,17 +15,33 @@ import kobe.task.Event;
 import kobe.task.Task;
 import kobe.task.Todo;
 
+/**
+ * Provides file-based persistence for tasks.
+ * Loads tasks from and saves tasks to a UTF-8 text file.
+ */
 public class Storage {
 	private final Path filePath;
 
+	/**
+	 * Creates storage with the default path "data/kobe.txt".
+	 */
 	public Storage() {
 		this(Paths.get("data", "kobe.txt"));
 	}
 
+	/**
+	 * Creates storage using the specified path.
+	 * @param filePath path to the data file
+	 */
 	public Storage(Path filePath) {
 		this.filePath = filePath;
 	}
 
+	/**
+	 * Loads tasks from the file if present.
+	 * Missing files/directories are treated as an empty list.
+	 * @return list of tasks parsed from the file
+	 */
 	public List<Task> load() {
 		List<Task> tasks = new ArrayList<>();
 
@@ -55,6 +71,10 @@ public class Storage {
 		return tasks;
 	}
 
+	/**
+	 * Saves the given tasks to the file, creating parent directories if needed.
+	 * @param tasks tasks to persist
+	 */
 	public void save(List<Task> tasks) {
 		try {
 			Path parent = filePath.getParent();
